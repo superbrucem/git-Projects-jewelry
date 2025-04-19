@@ -1,0 +1,54 @@
+{
+  "videos": [
+    {
+      "id": "dxI_a0Azp10",
+      "title": "Elegant Opal Necklace Collection",
+      "description": "Explore our stunning collection of handcrafted opal necklaces, featuring Australian opals set in 18k gold.",
+      "category": "Necklaces",
+      "enabled": true,
+      "order": 1
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Opal Ring Showcase",
+      "description": "Discover our exquisite opal rings, each uniquely designed to highlight the natural beauty of these precious stones.",
+      "category": "Rings",
+      "enabled": true,
+      "order": 2
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Opal Earrings - New Arrivals",
+      "description": "Check out our latest collection of opal earrings, featuring both classic and contemporary designs.",
+      "category": "Earrings",
+      "enabled": true,
+      "order": 3
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Custom Opal Jewelry Design Process",
+      "description": "Watch our master craftsmen create custom opal jewelry pieces from concept to completion.",
+      "category": "Custom Designs",
+      "enabled": false,
+      "order": 6
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Care Tips for Your Opal Jewelry",
+      "description": "Learn how to properly care for and maintain your precious opal jewelry to ensure its beauty lasts a lifetime.",
+      "category": "Care Tips",
+      "enabled": true,
+      "order": 5
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "The Story of Ottawa Opal Shop",
+      "description": "Discover the history and passion behind Ottawa Opal Shop and our commitment to quality craftsmanship.",
+      "category": "About Us",
+      "enabled": true,
+      "order": 4
+    }
+  ],
+  "channelId": "YOUR_CHANNEL_ID",
+  "orderBy": "order"
+}
