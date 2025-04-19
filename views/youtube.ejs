@@ -1,0 +1,62 @@
+<!-- Page Header -->
+<div class="hero-section" style="padding: 3rem 1rem; background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1535813547-99c456a41d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center;">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Our YouTube Channel</h1>
+        <p style="font-size: 1.25rem; max-width: 800px; margin-left: auto; margin-right: auto;">Watch our videos showcasing our beautiful jewelry collections and craftsmanship.</p>
+    </div>
+</div>
+
+<!-- YouTube Videos Section -->
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <h2 class="section-title">Featured Videos</h2>
+
+        <div class="grid-container" style="margin-top: 3rem;">
+            <% videos.forEach(video => { %>
+                <div class="grid-item">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                        <iframe
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                            src="https://www.youtube.com/embed/<%= video.id %>"
+                            title="<%= video.title %>"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;"><%= video.title %></h3>
+                        <p style="color: #666; margin-bottom: 0.5rem;"><span style="background-color: var(--primary-color); color: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;"><%= video.category %></span></p>
+                        <p style="margin-top: 1rem;"><%= video.description %></p>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<!-- Subscribe Section -->
+<section style="padding: 4rem 0; background-color: var(--primary-light);">
+    <div class="container" style="text-align: center;">
+        <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem;">Subscribe to Our Channel</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">Stay updated with our latest videos, jewelry showcases, and behind-the-scenes content.</p>
+        <a href="https://www.youtube.com/channel/YOUR_CHANNEL_ID" target="_blank" class="cta-button" style="background-color: #FF0000; color: white;">
+            <i class="fab fa-youtube" style="margin-right: 0.5rem;"></i> Subscribe Now
+        </a>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section style="padding: 4rem 0; background-color: #f8f8f8;">
+    <div class="container" style="text-align: center;">
+        <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem;">Have Questions?</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">If you have any questions about our jewelry featured in our videos, don't hesitate to contact us.</p>
+        <a href="/contact" class="cta-button">Contact Us</a>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // You can add JavaScript functionality here if needed
+    });
+</script>

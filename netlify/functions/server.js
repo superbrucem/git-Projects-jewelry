@@ -53,7 +53,7 @@ app.use(express.json());
 // Import routes with fallback handling
 let homeRoutes, collectionsRoutes, newArrivalsRoutes, aboutRoutes, contactRoutes,
     testimonialsRoutes, faqRoutes, shippingRoutes, productCareRoutes, warrantyRoutes,
-    privacyRoutes, productRoutes;
+    privacyRoutes, productRoutes, youtubeRoutes;
 
 try {
   homeRoutes = require('../../controllers/homeController');
@@ -68,6 +68,7 @@ try {
   warrantyRoutes = require('../../controllers/warrantyController');
   privacyRoutes = require('../../controllers/privacyController');
   productRoutes = require('../../controllers/productController');
+  youtubeRoutes = require('../../controllers/youtubeController');
   console.log('Successfully loaded all controllers');
 } catch (error) {
   console.error('Error loading controllers:', error);
@@ -131,6 +132,7 @@ app.use('/product-care', productCareRoutes || createFallbackRouter('Product Care
 app.use('/warranty', warrantyRoutes || createFallbackRouter('Warranty'));
 app.use('/privacy', privacyRoutes || createFallbackRouter('Privacy Policy'));
 app.use('/product', productRoutes || createFallbackRouter('Product'));
+app.use('/youtube', youtubeRoutes || createFallbackRouter('YouTube Channel'));
 
 // Handle 404
 app.use((_req, res) => {
