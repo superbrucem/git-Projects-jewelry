@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for Dean Aaron Jewels */
+:root {
+  --primary-color: #ffcccc; /* Light red color */
+  --secondary-color: #333333;
+  --accent-color: #f8f8f8;
+  --text-color: #333333;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+}
+
+.logo-container img {
+  max-width: 250px; /* Bigger logo */
+}
+
+.mastercard-logo {
+  max-width: 50%; /* Half size for Mastercard logo */
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-red-200 text-gray-800 px-4 py-2 rounded hover:bg-red-300 transition-colors;
+}
+
+/* Custom section styles */
+.section-title {
+  @apply text-3xl font-bold mb-6 text-center;
+  color: var(--primary-color);
+}
+
+/* Custom card styles */
+.product-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300;
+}
+
+.product-card:hover {
+  @apply transform scale-105;
+}
