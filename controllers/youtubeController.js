@@ -106,11 +106,20 @@ router.get('/', (req, res) => {
   const youtubeData = loadYoutubeData();
   const processedVideos = processVideos(youtubeData);
 
+  // Create debug information to pass to the client
+  const debugInfo = {
+    isNetlify: process.env.NETLIFY === 'true',
+    videosCount: processedVideos.length,
+    dataSource: process.env.NETLIFY === 'true' ? 'hardcoded' : 'file',
+    environment: process.env.NODE_ENV || 'development'
+  };
+
   res.render('youtube', {
     title: 'Ottawa Opal Shop - YouTube Channel',
     active: 'youtube',
     videos: processedVideos,
-    channelId: youtubeData.channelId
+    channelId: youtubeData.channelId,
+    debugInfo: JSON.stringify(debugInfo)
   });
 });
 

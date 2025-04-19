@@ -57,6 +57,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // You can add JavaScript functionality here if needed
+        // Debug information
+        console.log('YouTube page loaded');
+        console.log('Videos displayed:', document.querySelectorAll('.grid-item').length);
+        console.log('Video elements:', document.querySelectorAll('.grid-item'));
+
+        // Output debug information if available
+        <% if (typeof debugInfo !== 'undefined') { %>
+            window.debugInfo = JSON.parse('<%= debugInfo %>');
+            console.log('Debug info:', window.debugInfo);
+        <% } %>
     });
 </script>
