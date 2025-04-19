@@ -50,5 +50,7 @@
     }
   ],
   "channelId": "YOUR_CHANNEL_ID",
-  "orderBy": "order"
+  "orderBy": "order",
+  "source": "json-file",
+  "lastUpdated": "2023-04-19"
 }

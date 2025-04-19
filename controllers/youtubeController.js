@@ -55,7 +55,9 @@ const hardcodedYoutubeData = {
       order: 4
     }
   ],
-  channelId: "YOUR_CHANNEL_ID"
+  channelId: "YOUR_CHANNEL_ID",
+  source: "hardcoded-fallback",
+  lastUpdated: "2023-04-19"
 };
 
 // Load YouTube data from JSON file with fallback to hardcoded data
@@ -116,13 +118,14 @@ router.get('/', (req, res) => {
   // Create debug information to pass to the client
   const debugInfo = {
     videosCount: processedVideos.length,
-    dataSource: 'file', // We're always trying to use the file first now
+    dataSource: youtubeData.source || 'unknown', // This will show which source was actually used
     environment: process.env.NODE_ENV || 'development',
     nodeEnv: process.env.NODE_ENV,
     netlifyEnv: process.env.NETLIFY,
     host: req.get('host') || 'unknown',
     url: req.originalUrl || 'unknown',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    lastUpdated: youtubeData.lastUpdated || 'unknown'
   };
 
   res.render('youtube', {
