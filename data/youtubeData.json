@@ -29,7 +29,7 @@
       "title": "Custom Opal Jewelry Design Process",
       "description": "Watch our master craftsmen create custom opal jewelry pieces from concept to completion.",
       "category": "Custom Designs",
-      "enabled": false,
+      "enabled": true,
       "order": 6
     },
     {
