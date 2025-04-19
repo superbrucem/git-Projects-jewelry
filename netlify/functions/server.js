@@ -91,7 +91,7 @@ const createFallbackRouter = (routeName) => {
     res.send(`
       <html>
         <head>
-          <title>Dean Aaron Jewels - ${routeName}</title>
+          <title>Ottawa Opal Shop - ${routeName}</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
             .container { max-width: 1200px; margin: 0 auto; }
@@ -103,7 +103,7 @@ const createFallbackRouter = (routeName) => {
         <body>
           <div class="container">
             <header>
-              <h1>Dean Aaron Jewels</h1>
+              <h1>Ottawa Opal Shop</h1>
             </header>
             <div class="message">
               <h2>${routeName} Page</h2>

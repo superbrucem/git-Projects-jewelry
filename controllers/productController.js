@@ -61,7 +61,7 @@ const products = {
     isNew: false,
     isLimited: false
   },
-  
+
   // Rings
   'diamond-solitaire': {
     id: 'diamond-solitaire',
@@ -120,7 +120,7 @@ const products = {
     isNew: false,
     isLimited: false
   },
-  
+
   // Earrings
   'diamond-studs': {
     id: 'diamond-studs',
@@ -179,7 +179,7 @@ const products = {
     isNew: false,
     isLimited: true
   },
-  
+
   // New Arrivals - Spring Collection
   'floral-pendant': {
     id: 'floral-pendant',
@@ -238,7 +238,7 @@ const products = {
     isNew: true,
     isLimited: false
   },
-  
+
   // Limited Edition
   'celestial-necklace': {
     id: 'celestial-necklace',
@@ -316,18 +316,18 @@ const getRelatedProducts = (currentProductId, category, limit = 3) => {
 router.get('/:id', (req, res) => {
   const productId = req.params.id;
   const product = products[productId];
-  
+
   if (!product) {
-    return res.status(404).render('404', { 
+    return res.status(404).render('404', {
       title: 'Product Not Found',
       active: ''
     });
   }
-  
+
   const relatedProducts = getRelatedProducts(productId, product.category);
-  
+
   res.render('product-details', {
-    title: `Dean Aaron Jewels - ${product.name}`,
+    title: `Ottawa Opal Shop - ${product.name}`,
     active: product.category.toLowerCase() === 'necklaces' || product.category.toLowerCase() === 'rings' || product.category.toLowerCase() === 'earrings' ? 'collections' : 'new-arrivals',
     product,
     relatedProducts

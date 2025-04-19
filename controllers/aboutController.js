@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.render('about', {
-    title: 'Dean Aaron Jewels - About Us',
+    title: 'Ottawa Opal Shop - About Us',
     active: 'about'
   });
 });

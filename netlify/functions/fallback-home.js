@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
     res.send(`
       <html>
         <head>
-          <title>Dean Aaron Jewels - Fallback Home</title>
+          <title>Ottawa Opal Shop - Fallback Home</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
             .container { max-width: 1200px; margin: 0 auto; }
@@ -19,12 +19,12 @@ router.get('/', (req, res) => {
         <body>
           <div class="container">
             <header>
-              <h1>Dean Aaron Jewels</h1>
+              <h1>Ottawa Opal Shop</h1>
             </header>
             <div class="message">
               <h2>Welcome to our Jewelry Store</h2>
               <p>This is a fallback page. The main site is currently experiencing technical difficulties.</p>
-              <p>Please check back later or contact us at support@deanaaronjewels.com</p>
+              <p>Please check back later or contact us at support@ottawaopalshop.com</p>
             </div>
           </div>
         </body>
