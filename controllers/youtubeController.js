@@ -7,6 +7,51 @@ const fs = require('fs');
 const loadYoutubeData = () => {
   try {
     const dataPath = path.join(__dirname, '../data/youtubeData.json');
+
+    // Debug: Check if data directory and file exist
+    const dataDir = path.join(__dirname, '../data');
+    console.log('Data directory exists:', fs.existsSync(dataDir));
+    console.log('Data file path:', dataPath);
+    console.log('Data file exists:', fs.existsSync(dataPath));
+
+    // If data directory doesn't exist, try to create it
+    if (!fs.existsSync(dataDir)) {
+      console.log('Creating data directory...');
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    // Check if file exists after ensuring directory exists
+    if (!fs.existsSync(dataPath)) {
+      console.error('YouTube data file not found even after creating directory');
+
+      // Create a default data file if it doesn't exist
+      console.log('Creating default YouTube data file...');
+      const defaultData = {
+        videos: [
+          {
+            id: 'dQw4w9WgXcQ',
+            title: 'Elegant Opal Necklace Collection',
+            description: 'Explore our stunning collection of handcrafted opal necklaces.',
+            category: 'Necklaces',
+            enabled: true,
+            order: 1
+          },
+          {
+            id: 'dQw4w9WgXcQ',
+            title: 'Opal Ring Showcase',
+            description: 'Discover our exquisite opal rings.',
+            category: 'Rings',
+            enabled: true,
+            order: 2
+          }
+        ],
+        channelId: 'YOUR_CHANNEL_ID'
+      };
+
+      fs.writeFileSync(dataPath, JSON.stringify(defaultData, null, 2), 'utf8');
+      return defaultData;
+    }
+
     const fileData = fs.readFileSync(dataPath, 'utf8');
     return JSON.parse(fileData);
   } catch (error) {
