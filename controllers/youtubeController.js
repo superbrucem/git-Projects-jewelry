@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
+const http = require('http');
 
 // Hardcoded YouTube data as fallback for production environment
 const hardcodedYoutubeData = {
@@ -60,37 +62,83 @@ const hardcodedYoutubeData = {
   lastUpdated: "2023-04-19"
 };
 
-// Load YouTube data based on environment
-const loadYoutubeData = () => {
+// Function to fetch data from a URL
+const fetchDataFromUrl = (url) => {
+  return new Promise((resolve, reject) => {
+    // Determine which protocol to use based on the URL
+    const client = url.startsWith('https') ? https : http;
+
+    client.get(url, (response) => {
+      // Handle redirects
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        return fetchDataFromUrl(response.headers.location).then(resolve).catch(reject);
+      }
+
+      // Check for successful response
+      if (response.statusCode !== 200) {
+        return reject(new Error(`Failed to fetch data: ${response.statusCode}`));
+      }
+
+      // Collect data chunks
+      let data = '';
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // Process data when complete
+      response.on('end', () => {
+        try {
+          const parsedData = JSON.parse(data);
+          resolve(parsedData);
+        } catch (error) {
+          reject(new Error(`Failed to parse JSON: ${error.message}`));
+        }
+      });
+    }).on('error', (error) => {
+      reject(new Error(`Request failed: ${error.message}`));
+    });
+  });
+};
+
+// Load YouTube data from various sources
+const loadYoutubeData = async () => {
   try {
-    // Check if we're in a production-like environment
-    const isProduction = process.env.NODE_ENV === 'production' ||
-                        process.env.NETLIFY === 'true' ||
-                        (typeof window !== 'undefined') || // Browser environment
-                        process.env.VERCEL === '1'; // Vercel environment
+    // URL to the JSON file on Google Drive or other cloud storage
+    // Replace this with your actual URL when you have it
+    const dataUrl = process.env.YOUTUBE_DATA_URL || 'https://example.com/youtubeData.json';
 
-    // For production environments, always use hardcoded data
-    if (isProduction) {
-      console.log('Production environment detected, using hardcoded data');
-      return hardcodedYoutubeData;
-    }
+    // Try to fetch from URL first
+    try {
+      console.log('Attempting to fetch YouTube data from URL:', dataUrl);
+      const data = await fetchDataFromUrl(dataUrl);
+      console.log('Successfully fetched YouTube data from URL');
+      return data;
+    } catch (urlError) {
+      console.error('Error fetching from URL:', urlError.message);
 
-    // For local development, try to load from file
-    const dataPath = path.join(__dirname, '../data/youtubeData.json');
-    console.log('Development environment, loading from file:', dataPath);
+      // If URL fetch fails, try local file (for development)
+      if (process.env.NODE_ENV !== 'production') {
+        try {
+          const dataPath = path.join(__dirname, '../data/youtubeData.json');
+          console.log('Trying local file:', dataPath);
 
-    if (fs.existsSync(dataPath)) {
-      const fileData = fs.readFileSync(dataPath, 'utf8');
-      const parsedData = JSON.parse(fileData);
-      console.log('Successfully loaded YouTube data from file');
-      return parsedData;
-    } else {
-      console.log('YouTube data file not found, using hardcoded data');
+          if (fs.existsSync(dataPath)) {
+            const fileData = fs.readFileSync(dataPath, 'utf8');
+            const parsedData = JSON.parse(fileData);
+            console.log('Successfully loaded YouTube data from local file');
+            return parsedData;
+          }
+        } catch (fileError) {
+          console.error('Error reading local file:', fileError.message);
+        }
+      }
+
+      // If all else fails, use hardcoded data
+      console.log('Using hardcoded fallback data');
       return hardcodedYoutubeData;
     }
   } catch (error) {
-    console.error('Error loading YouTube data:', error);
-    console.log('Falling back to hardcoded YouTube data');
+    console.error('Error in loadYoutubeData:', error.message);
     return hardcodedYoutubeData;
   }
 };
@@ -108,34 +156,39 @@ const processVideos = (youtubeData) => {
   return filteredVideos;
 };
 
-router.get('/', (req, res) => {
-  const youtubeData = loadYoutubeData();
-  const processedVideos = processVideos(youtubeData);
+router.get('/', async (req, res) => {
+  try {
+    const youtubeData = await loadYoutubeData();
+    const processedVideos = processVideos(youtubeData);
 
-  // Check if we're in a production-like environment
-  const isProduction = process.env.NODE_ENV === 'production' ||
-                      process.env.NETLIFY === 'true' ||
-                      process.env.VERCEL === '1';
+    // Check if we're in a production-like environment
+    const isProduction = process.env.NODE_ENV === 'production' ||
+                        process.env.NETLIFY === 'true' ||
+                        process.env.VERCEL === '1';
 
-  // Create debug information to pass to the client
-  const debugInfo = {
-    videosCount: processedVideos.length,
-    dataSource: youtubeData.source || 'unknown',
-    environment: isProduction ? 'production' : 'development',
-    isProduction: isProduction,
-    host: req.get('host') || 'unknown',
-    url: req.originalUrl || 'unknown',
-    timestamp: new Date().toISOString(),
-    lastUpdated: youtubeData.lastUpdated || 'unknown'
-  };
+    // Create debug information to pass to the client
+    const debugInfo = {
+      videosCount: processedVideos.length,
+      dataSource: youtubeData.source || 'unknown',
+      environment: isProduction ? 'production' : 'development',
+      host: req.get('host') || 'unknown',
+      url: req.originalUrl || 'unknown',
+      timestamp: new Date().toISOString(),
+      lastUpdated: youtubeData.lastUpdated || 'unknown',
+      dataUrl: process.env.YOUTUBE_DATA_URL || 'not set'
+    };
 
-  res.render('youtube', {
-    title: 'Ottawa Opal Shop - YouTube Channel',
-    active: 'youtube',
-    videos: processedVideos,
-    channelId: youtubeData.channelId,
-    debugInfo: JSON.stringify(debugInfo)
-  });
+    res.render('youtube', {
+      title: 'Ottawa Opal Shop - YouTube Channel',
+      active: 'youtube',
+      videos: processedVideos,
+      channelId: youtubeData.channelId,
+      debugInfo: JSON.stringify(debugInfo)
+    });
+  } catch (error) {
+    console.error('Error in YouTube route handler:', error);
+    res.status(500).send('Error loading YouTube data');
+  }
 });
 
 module.exports = router;
