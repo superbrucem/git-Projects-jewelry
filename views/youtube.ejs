@@ -64,8 +64,12 @@
 
         // Output debug information if available
         <% if (typeof debugInfo !== 'undefined') { %>
-            window.debugInfo = JSON.parse('<%= debugInfo %>');
-            console.log('Debug info:', window.debugInfo);
+            try {
+                window.debugInfo = <%- debugInfo %>; // Use <%- %> to output unescaped JSON
+                console.log('Debug info:', window.debugInfo);
+            } catch (e) {
+                console.error('Error parsing debug info:', e);
+            }
         <% } %>
     });
 </script>
