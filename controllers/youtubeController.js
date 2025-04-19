@@ -61,13 +61,17 @@ const hardcodedYoutubeData = {
 // Load YouTube data from JSON file with fallback to hardcoded data
 const loadYoutubeData = () => {
   try {
-    // Check if we're in a Netlify environment
-    const isNetlify = process.env.NETLIFY === 'true';
-    console.log('Is Netlify environment:', isNetlify);
+    // Check if we're in a production environment (could be Netlify or other hosting)
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
+    console.log('Is production environment:', isProduction);
 
-    // If we're in Netlify, use the hardcoded data
-    if (isNetlify) {
-      console.log('Using hardcoded YouTube data for Netlify environment');
+    // Check if we're running in a browser environment (client-side rendering)
+    const isBrowser = typeof window !== 'undefined';
+    console.log('Is browser environment:', isBrowser);
+
+    // For production or if we can't access the file system, use hardcoded data
+    if (isProduction) {
+      console.log('Using hardcoded YouTube data for production environment');
       return hardcodedYoutubeData;
     }
 
@@ -75,9 +79,22 @@ const loadYoutubeData = () => {
     const dataPath = path.join(__dirname, '../data/youtubeData.json');
     console.log('Attempting to load YouTube data from:', dataPath);
 
-    if (fs.existsSync(dataPath)) {
-      const fileData = fs.readFileSync(dataPath, 'utf8');
-      return JSON.parse(fileData);
+    // Check if the file exists
+    let fileExists = false;
+    try {
+      fileExists = fs.existsSync(dataPath);
+    } catch (fsError) {
+      console.error('Error checking if file exists:', fsError);
+    }
+
+    if (fileExists) {
+      try {
+        const fileData = fs.readFileSync(dataPath, 'utf8');
+        return JSON.parse(fileData);
+      } catch (readError) {
+        console.error('Error reading or parsing file:', readError);
+        return hardcodedYoutubeData;
+      }
     } else {
       console.log('YouTube data file not found, using hardcoded data');
       return hardcodedYoutubeData;
@@ -107,11 +124,17 @@ router.get('/', (req, res) => {
   const processedVideos = processVideos(youtubeData);
 
   // Create debug information to pass to the client
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
   const debugInfo = {
     isNetlify: process.env.NETLIFY === 'true',
+    isProduction: isProduction,
     videosCount: processedVideos.length,
-    dataSource: process.env.NETLIFY === 'true' ? 'hardcoded' : 'file',
-    environment: process.env.NODE_ENV || 'development'
+    dataSource: isProduction ? 'hardcoded' : 'file',
+    environment: process.env.NODE_ENV || 'development',
+    nodeEnv: process.env.NODE_ENV,
+    netlifyEnv: process.env.NETLIFY,
+    host: req.get('host') || 'unknown',
+    url: req.originalUrl || 'unknown'
   };
 
   res.render('youtube', {
