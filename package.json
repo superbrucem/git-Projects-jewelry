@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "build": "npx postcss public/styles.css -o public/styles.css --use tailwindcss --use autoprefixer",
-    "dev": "node app.js"
+    "build": "npx postcss public/styles.css -o public/styles.css --use tailwindcss --use autoprefixer && npm run install-function-deps",
+    "dev": "node app.js",
+    "install-function-deps": "cd netlify/functions && npm install"
   },
   "keywords": [],
   "author": "",

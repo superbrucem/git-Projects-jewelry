@@ -10,3 +10,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+[functions]
+  # This includes the entire project directory including node_modules
+  included_files = ["**/*"]
+  node_bundler = "esbuild"
