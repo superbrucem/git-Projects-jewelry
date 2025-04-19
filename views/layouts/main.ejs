@@ -65,12 +65,12 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
-            color: var(--text-dark);
+            color: var(--text-light);
         }
 
         .header-nav a:hover,
         .header-nav a.active {
-            color: var(--primary-color);
+            color: var(--accent-color);
         }
 
         .header-actions {
@@ -79,12 +79,12 @@
         }
 
         .header-actions a {
-            color: var(--text-dark);
+            color: var(--text-light);
             transition: color 0.3s ease;
         }
 
         .header-actions a:hover {
-            color: var(--primary-color);
+            color: var(--accent-color);
         }
 
         .grid-container {
@@ -214,12 +214,12 @@
 </head>
 <body>
     <!-- Header Section -->
-    <header class="bg-white shadow-lg py-4 sticky top-0 z-50 w-full">
+    <header class="shadow-lg py-4 sticky top-0 z-50 w-full" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.imgur.com/Ks5SXia.jpg'); background-size: cover; background-position: center;">
         <div class="header-container">
             <div class="header-logo">
                 <a href="/" style="text-decoration: none; display: flex; align-items: center;">
                     <span class="text-3xl mr-2" style="color: var(--accent-color);"><i class="fas fa-gem"></i></span>
-                    <h1 class="text-2xl font-bold text-transparent bg-clip-text" style="background-image: linear-gradient(to right, #c0392b, var(--accent-color)); margin: 0;">OTTAWA OPAL SHOP</h1>
+                    <h1 class="text-2xl font-bold" style="color: white; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">OTTAWA OPAL SHOP</h1>
                 </a>
             </div>
             <nav class="header-nav">
@@ -233,9 +233,9 @@
                 </ul>
             </nav>
             <div class="header-actions">
-                <a href="#" style="color: var(--text-dark);"><i class="fas fa-search text-xl"></i></a>
-                <a href="#" style="color: var(--text-dark);"><i class="fas fa-shopping-bag text-xl"></i></a>
-                <button class="md:hidden" style="color: var(--text-dark); background: none; border: none; cursor: pointer;"><i class="fas fa-bars text-xl"></i></button>
+                <a href="#" style="color: var(--text-light);"><i class="fas fa-search text-xl"></i></a>
+                <a href="#" style="color: var(--text-light);"><i class="fas fa-shopping-bag text-xl"></i></a>
+                <button class="md:hidden" style="color: var(--text-light); background: none; border: none; cursor: pointer;"><i class="fas fa-bars text-xl"></i></button>
             </div>
         </div>
     </header>
