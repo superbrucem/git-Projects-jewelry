@@ -1,0 +1,139 @@
+<!-- Hero Section -->
+<div class="hero-section" style="padding: 3rem 1rem; background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('<%= product.heroImage %>'); background-size: cover; background-position: center;">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; font-weight: bold; color: white; margin-bottom: 1rem;"><%= product.name %></h1>
+        <p style="font-size: 1.25rem; color: white; max-width: 800px;"><%= product.category %></p>
+    </div>
+</div>
+
+<!-- Product Details Section -->
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 3rem;">
+            <!-- Product Image -->
+            <div style="flex: 1; min-width: 300px;">
+                <div style="height: 500px; background-color: #f1f1f1; border-radius: 0.5rem; overflow: hidden;">
+                    <img src="<%= product.image %>" alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <div style="height: 80px; width: 80px; background-color: #f1f1f1; border-radius: 0.5rem; overflow: hidden;">
+                        <img src="<%= product.image %>" alt="<%= product.name %> thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="height: 80px; width: 80px; background-color: #f1f1f1; border-radius: 0.5rem; overflow: hidden;">
+                        <img src="<%= product.image %>" alt="<%= product.name %> thumbnail" style="width: 100%; height: 100%; object-fit: cover; transform: scale(1.2);">
+                    </div>
+                    <div style="height: 80px; width: 80px; background-color: #f1f1f1; border-radius: 0.5rem; overflow: hidden;">
+                        <img src="<%= product.image %>" alt="<%= product.name %> thumbnail" style="width: 100%; height: 100%; object-fit: cover; transform: scale(1.5);">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div style="flex: 1; min-width: 300px;">
+                <h2 style="font-size: 2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 1rem;"><%= product.name %></h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: #2d3748;">$<%= product.price.toFixed(2) %></span>
+                    <% if (product.oldPrice) { %>
+                    <span style="font-size: 1.25rem; color: #a0aec0; text-decoration: line-through; margin-left: 1rem;">$<%= product.oldPrice.toFixed(2) %></span>
+                    <% } %>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: #f6ad55;">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </span>
+                        <span style="color: #718096; margin-left: 0.5rem;">4.5 (24 reviews)</span>
+                    </div>
+                    
+                    <% if (product.isNew) { %>
+                    <span style="display: inline-block; background-color: var(--accent-color); color: var(--text-dark); padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; font-size: 0.75rem; margin-right: 0.5rem;">NEW</span>
+                    <% } %>
+                    
+                    <% if (product.isLimited) { %>
+                    <span style="display: inline-block; background-color: #e53e3e; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; font-size: 0.75rem;">LIMITED</span>
+                    <% } %>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin-bottom: 1rem;">Description</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;"><%= product.description %></p>
+                    <p style="color: #4a5568; line-height: 1.6;"><%= product.details %></p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin-bottom: 1rem;">Features</h3>
+                    <ul style="color: #4a5568; line-height: 1.6; padding-left: 1.5rem;">
+                        <% product.features.forEach(function(feature) { %>
+                        <li style="margin-bottom: 0.5rem;"><%= feature %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <button class="cta-button" style="flex: 1;">Add to Cart</button>
+                    <button style="flex: 0 0 auto; background-color: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.75rem 1rem; border-radius: 0.25rem; font-weight: 600; transition: all 0.3s;">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div style="padding: 1.5rem; background-color: #f7fafc; border-radius: 0.5rem;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <span style="color: var(--primary-color); margin-right: 1rem;"><i class="fas fa-truck"></i></span>
+                        <div>
+                            <h4 style="font-weight: 600; color: #2d3748;">Free Shipping</h4>
+                            <p style="color: #718096; font-size: 0.875rem;">On orders over $100</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center;">
+                        <span style="color: var(--primary-color); margin-right: 1rem;"><i class="fas fa-undo"></i></span>
+                        <div>
+                            <h4 style="font-weight: 600; color: #2d3748;">30-Day Returns</h4>
+                            <p style="color: #718096; font-size: 0.875rem;">Hassle-free returns</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products Section -->
+<section style="padding: 4rem 0; background-color: #f9f9f9;">
+    <div class="container">
+        <h2 style="font-size: 1.875rem; font-weight: bold; margin-bottom: 2rem; text-align: center;">You May Also Like</h2>
+        
+        <div class="grid-container">
+            <% relatedProducts.forEach(function(relatedProduct) { %>
+            <div class="grid-item">
+                <a href="/product/<%= relatedProduct.id %>" style="text-decoration: none; color: inherit;">
+                    <div style="position: relative; height: 16rem; background-color: #f1f1f1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 0.5rem 0.5rem 0 0;">
+                        <img src="<%= relatedProduct.image %>" alt="<%= relatedProduct.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                        <% if (relatedProduct.isNew) { %>
+                        <span style="position: absolute; top: 1rem; right: 1rem; background-color: var(--accent-color); color: var(--text-dark); padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; font-size: 0.75rem;">NEW</span>
+                        <% } %>
+                        <% if (relatedProduct.isLimited) { %>
+                        <span style="position: absolute; top: 1rem; right: 1rem; background-color: #e53e3e; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; font-size: 0.75rem;">LIMITED</span>
+                        <% } %>
+                    </div>
+                    <div style="padding: 1.5rem; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 0.5rem 0.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin-bottom: 0.5rem;"><%= relatedProduct.name %></h3>
+                        <p style="color: #718096; margin-bottom: 1rem;"><%= relatedProduct.category %></p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600; color: #2d3748;">$<%= relatedProduct.price.toFixed(2) %></span>
+                            <button class="cta-button" style="font-size: 0.875rem; padding: 0.5rem 1rem;">View Details</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
