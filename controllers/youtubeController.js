@@ -61,21 +61,7 @@ const hardcodedYoutubeData = {
 // Load YouTube data from JSON file with fallback to hardcoded data
 const loadYoutubeData = () => {
   try {
-    // Check if we're in a production environment (could be Netlify or other hosting)
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
-    console.log('Is production environment:', isProduction);
-
-    // Check if we're running in a browser environment (client-side rendering)
-    const isBrowser = typeof window !== 'undefined';
-    console.log('Is browser environment:', isBrowser);
-
-    // For production or if we can't access the file system, use hardcoded data
-    if (isProduction) {
-      console.log('Using hardcoded YouTube data for production environment');
-      return hardcodedYoutubeData;
-    }
-
-    // For local development, try to load from file
+    // Always try to load from file first, regardless of environment
     const dataPath = path.join(__dirname, '../data/youtubeData.json');
     console.log('Attempting to load YouTube data from:', dataPath);
 
@@ -83,6 +69,7 @@ const loadYoutubeData = () => {
     let fileExists = false;
     try {
       fileExists = fs.existsSync(dataPath);
+      console.log('YouTube data file exists:', fileExists);
     } catch (fsError) {
       console.error('Error checking if file exists:', fsError);
     }
@@ -90,9 +77,12 @@ const loadYoutubeData = () => {
     if (fileExists) {
       try {
         const fileData = fs.readFileSync(dataPath, 'utf8');
-        return JSON.parse(fileData);
+        const parsedData = JSON.parse(fileData);
+        console.log('Successfully loaded YouTube data from file');
+        return parsedData;
       } catch (readError) {
         console.error('Error reading or parsing file:', readError);
+        console.log('Falling back to hardcoded YouTube data due to read/parse error');
         return hardcodedYoutubeData;
       }
     } else {
@@ -101,7 +91,7 @@ const loadYoutubeData = () => {
     }
   } catch (error) {
     console.error('Error loading YouTube data:', error);
-    console.log('Falling back to hardcoded YouTube data');
+    console.log('Falling back to hardcoded YouTube data due to general error');
     return hardcodedYoutubeData;
   }
 };
@@ -124,17 +114,15 @@ router.get('/', (req, res) => {
   const processedVideos = processVideos(youtubeData);
 
   // Create debug information to pass to the client
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
   const debugInfo = {
-    isNetlify: process.env.NETLIFY === 'true',
-    isProduction: isProduction,
     videosCount: processedVideos.length,
-    dataSource: isProduction ? 'hardcoded' : 'file',
+    dataSource: 'file', // We're always trying to use the file first now
     environment: process.env.NODE_ENV || 'development',
     nodeEnv: process.env.NODE_ENV,
     netlifyEnv: process.env.NETLIFY,
     host: req.get('host') || 'unknown',
-    url: req.originalUrl || 'unknown'
+    url: req.originalUrl || 'unknown',
+    timestamp: new Date().toISOString()
   };
 
   res.render('youtube', {
