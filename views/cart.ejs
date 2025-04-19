@@ -1,0 +1,267 @@
+<!-- Page Header -->
+<div class="hero-section" style="padding: 3rem 1rem;">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Your Shopping Cart</h1>
+        <p style="font-size: 1.25rem; max-width: 800px; margin-left: auto; margin-right: auto;">Review your items and proceed to checkout.</p>
+    </div>
+</div>
+
+<!-- Cart Content -->
+<section style="padding: 4rem 0;">
+    <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        <div id="cart-items">
+            <!-- Cart items will be dynamically inserted here -->
+            <div class="cart-empty" style="text-align: center; padding: 3rem 0;">
+                <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Your cart is empty</h2>
+                <p style="margin-bottom: 2rem;">Looks like you haven't added any items to your cart yet.</p>
+                <a href="/collections" class="cta-button">Browse Collections</a>
+            </div>
+        </div>
+        
+        <div id="cart-summary" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; display: none;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span style="font-weight: bold;">Subtotal:</span>
+                <span id="cart-subtotal">$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span style="font-weight: bold;">Shipping:</span>
+                <span>Calculated at checkout</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2rem; padding-top: 1rem; border-top: 1px dashed #eee;">
+                <span style="font-weight: bold; font-size: 1.25rem;">Estimated Total:</span>
+                <span id="cart-total" style="font-weight: bold; font-size: 1.25rem;">$0.00</span>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button id="clear-cart" style="flex: 1; background-color: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 0.75rem 1rem; border-radius: 0.25rem; font-weight: 600; cursor: pointer;">Clear Cart</button>
+                <button id="checkout-button" class="cta-button" style="flex: 2;">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get cart from localStorage
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartSummary = document.getElementById('cart-summary');
+        const cartEmptyMessage = document.querySelector('.cart-empty');
+        const cartSubtotal = document.getElementById('cart-subtotal');
+        const cartTotal = document.getElementById('cart-total');
+        const clearCartButton = document.getElementById('clear-cart');
+        const checkoutButton = document.getElementById('checkout-button');
+        
+        // Render cart items
+        renderCart();
+        
+        // Add event listeners
+        if (clearCartButton) {
+            clearCartButton.addEventListener('click', clearCart);
+        }
+        
+        if (checkoutButton) {
+            checkoutButton.addEventListener('click', proceedToCheckout);
+        }
+        
+        // Function to render cart items
+        function renderCart() {
+            if (cart.length === 0) {
+                // Show empty cart message
+                cartEmptyMessage.style.display = 'block';
+                cartSummary.style.display = 'none';
+                return;
+            }
+            
+            // Hide empty cart message and show summary
+            cartEmptyMessage.style.display = 'none';
+            cartSummary.style.display = 'block';
+            
+            // Clear previous items
+            cartItemsContainer.innerHTML = '';
+            
+            // Create cart items table
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            
+            // Create table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr style="border-bottom: 2px solid #eee;">
+                    <th style="text-align: left; padding: 1rem 0.5rem;">Product</th>
+                    <th style="text-align: center; padding: 1rem 0.5rem;">Price</th>
+                    <th style="text-align: center; padding: 1rem 0.5rem;">Quantity</th>
+                    <th style="text-align: right; padding: 1rem 0.5rem;">Total</th>
+                    <th style="text-align: center; padding: 1rem 0.5rem;"></th>
+                </tr>
+            `;
+            table.appendChild(thead);
+            
+            // Create table body
+            const tbody = document.createElement('tbody');
+            
+            // Calculate subtotal
+            let subtotal = 0;
+            
+            // Add each cart item
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #eee';
+                
+                tr.innerHTML = `
+                    <td style="padding: 1rem 0.5rem;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 80px; height: 80px; margin-right: 1rem; border-radius: 4px; overflow: hidden;">
+                                <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">${item.name}</h3>
+                                <a href="/product/${item.id}" style="color: var(--primary-color); text-decoration: none; font-size: 0.875rem;">View Details</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align: center; padding: 1rem 0.5rem;">$${item.price.toFixed(2)}</td>
+                    <td style="text-align: center; padding: 1rem 0.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <button class="quantity-btn" data-action="decrease" data-index="${index}" style="width: 30px; height: 30px; border: 1px solid #ddd; background: none; cursor: pointer;">-</button>
+                            <span style="margin: 0 0.5rem; min-width: 30px; text-align: center;">${item.quantity}</span>
+                            <button class="quantity-btn" data-action="increase" data-index="${index}" style="width: 30px; height: 30px; border: 1px solid #ddd; background: none; cursor: pointer;">+</button>
+                        </div>
+                    </td>
+                    <td style="text-align: right; padding: 1rem 0.5rem; font-weight: bold;">$${itemTotal.toFixed(2)}</td>
+                    <td style="text-align: center; padding: 1rem 0.5rem;">
+                        <button class="remove-item" data-index="${index}" style="background: none; border: none; color: #999; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            table.appendChild(tbody);
+            cartItemsContainer.appendChild(table);
+            
+            // Update subtotal and total
+            cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+            cartTotal.textContent = `$${subtotal.toFixed(2)}`;
+            
+            // Add event listeners to quantity buttons and remove buttons
+            document.querySelectorAll('.quantity-btn').forEach(button => {
+                button.addEventListener('click', updateQuantity);
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', removeItem);
+            });
+        }
+        
+        // Function to update item quantity
+        function updateQuantity(e) {
+            const index = parseInt(e.target.dataset.index);
+            const action = e.target.dataset.action;
+            
+            if (action === 'increase') {
+                cart[index].quantity += 1;
+            } else if (action === 'decrease') {
+                if (cart[index].quantity > 1) {
+                    cart[index].quantity -= 1;
+                } else {
+                    // Remove item if quantity would be less than 1
+                    cart.splice(index, 1);
+                }
+            }
+            
+            // Save updated cart
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count in header
+            updateCartCount();
+            
+            // Re-render cart
+            renderCart();
+        }
+        
+        // Function to remove item from cart
+        function removeItem(e) {
+            const index = parseInt(e.target.closest('.remove-item').dataset.index);
+            
+            // Remove item from cart
+            cart.splice(index, 1);
+            
+            // Save updated cart
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count in header
+            updateCartCount();
+            
+            // Re-render cart
+            renderCart();
+        }
+        
+        // Function to clear cart
+        function clearCart() {
+            // Clear cart array
+            cart.length = 0;
+            
+            // Save empty cart
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count in header
+            updateCartCount();
+            
+            // Re-render cart
+            renderCart();
+        }
+        
+        // Function to proceed to checkout
+        function proceedToCheckout() {
+            alert('Checkout functionality is not implemented yet.');
+        }
+        
+        // Function to update cart count in header (simplified version)
+        function updateCartCount() {
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            // Find or create cart badge
+            let cartBadge = document.querySelector('.cart-badge');
+            if (!cartBadge && cartCount > 0) {
+                const shoppingBagIcon = document.querySelector('.header-actions a i.fa-shopping-bag');
+                if (shoppingBagIcon) {
+                    const shoppingBagLink = shoppingBagIcon.closest('a');
+                    cartBadge = document.createElement('span');
+                    cartBadge.className = 'cart-badge';
+                    cartBadge.style.position = 'absolute';
+                    cartBadge.style.top = '-8px';
+                    cartBadge.style.right = '-8px';
+                    cartBadge.style.backgroundColor = 'var(--accent-color)';
+                    cartBadge.style.color = 'var(--text-dark)';
+                    cartBadge.style.borderRadius = '50%';
+                    cartBadge.style.width = '20px';
+                    cartBadge.style.height = '20px';
+                    cartBadge.style.display = 'flex';
+                    cartBadge.style.alignItems = 'center';
+                    cartBadge.style.justifyContent = 'center';
+                    cartBadge.style.fontSize = '12px';
+                    cartBadge.style.fontWeight = 'bold';
+                    
+                    // Make the parent position relative for absolute positioning of badge
+                    shoppingBagLink.style.position = 'relative';
+                    shoppingBagLink.appendChild(cartBadge);
+                }
+            }
+            
+            if (cartBadge) {
+                if (cartCount > 0) {
+                    cartBadge.textContent = cartCount;
+                    cartBadge.style.display = 'flex';
+                } else {
+                    cartBadge.style.display = 'none';
+                }
+            }
+        }
+    });
+</script>

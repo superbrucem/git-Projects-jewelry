@@ -32,6 +32,7 @@ const warrantyRoutes = require('./controllers/warrantyController');
 const privacyRoutes = require('./controllers/privacyController');
 const productRoutes = require('./controllers/productController');
 const youtubeRoutes = require('./controllers/youtubeController');
+const cartRoutes = require('./controllers/cartController');
 
 // Use routes
 app.use('/', homeRoutes);
@@ -47,6 +48,7 @@ app.use('/warranty', warrantyRoutes);
 app.use('/privacy', privacyRoutes);
 app.use('/product', productRoutes);
 app.use('/youtube', youtubeRoutes);
+app.use('/cart', cartRoutes);
 
 // 404 handler
 app.use((req, res) => {
