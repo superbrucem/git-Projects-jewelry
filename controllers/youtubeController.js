@@ -1,66 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
 const https = require('https');
 const http = require('http');
-
-// Hardcoded YouTube data as fallback for production environment
-const hardcodedYoutubeData = {
-  videos: [
-    {
-      id: "dxI_a0Azp10",
-      title: "Elegant Opal Necklace Collection",
-      description: "Explore our stunning collection of handcrafted opal necklaces, featuring Australian opals set in 18k gold.",
-      category: "Necklaces",
-      enabled: true,
-      order: 3
-    },
-    {
-      id: "dQw4w9WgXcQ",
-      title: "Opal Ring Showcase",
-      description: "Discover our exquisite opal rings, each uniquely designed to highlight the natural beauty of these precious stones.",
-      category: "Rings",
-      enabled: true,
-      order: 2
-    },
-    {
-      id: "dQw4w9WgXcQ",
-      title: "Opal Earrings - New Arrivals",
-      description: "Check out our latest collection of opal earrings, featuring both classic and contemporary designs.",
-      category: "Earrings",
-      enabled: true,
-      order: 1
-    },
-    {
-      id: "dQw4w9WgXcQ",
-      title: "Custom Opal Jewelry Design Process",
-      description: "Watch our master craftsmen create custom opal jewelry pieces from concept to completion.",
-      category: "Custom Designs",
-      enabled: false,
-      order: 6
-    },
-    {
-      id: "dQw4w9WgXcQ",
-      title: "Care Tips for Your Opal Jewelry",
-      description: "Learn how to properly care for and maintain your precious opal jewelry to ensure its beauty lasts a lifetime.",
-      category: "Care Tips",
-      enabled: true,
-      order: 5
-    },
-    {
-      id: "dQw4w9WgXcQ",
-      title: "The Story of Ottawa Opal Shop",
-      description: "Discover the history and passion behind Ottawa Opal Shop and our commitment to quality craftsmanship.",
-      category: "About Us",
-      enabled: true,
-      order: 4
-    }
-  ],
-  channelId: "YOUR_CHANNEL_ID",
-  source: "hardcoded-fallback",
-  lastUpdated: "2023-04-19"
-};
 
 // Function to fetch data from a URL
 const fetchDataFromUrl = (url) => {
@@ -100,46 +41,39 @@ const fetchDataFromUrl = (url) => {
   });
 };
 
-// Load YouTube data from various sources
+// Load YouTube data exclusively from Google Drive
 const loadYoutubeData = async () => {
   try {
-    // URL to the JSON file on Google Drive or other cloud storage
-    // Replace this with your actual URL when you have it
-    const dataUrl = process.env.YOUTUBE_DATA_URL || 'https://example.com/youtubeData.json';
+    // URL to the JSON file on Google Drive
+    const defaultUrl = 'https://drive.google.com/uc?export=download&id=1gFyvg1CjWjgBC9OQZe97A2me9BLki657';
+    const dataUrl = process.env.YOUTUBE_DATA_URL || defaultUrl;
 
-    // Try to fetch from URL first
-    try {
-      console.log('Attempting to fetch YouTube data from URL:', dataUrl);
-      const data = await fetchDataFromUrl(dataUrl);
-      console.log('Successfully fetched YouTube data from URL');
-      return data;
-    } catch (urlError) {
-      console.error('Error fetching from URL:', urlError.message);
+    console.log('Fetching YouTube data from Google Drive:', dataUrl);
+    const data = await fetchDataFromUrl(dataUrl);
+    console.log('Successfully fetched YouTube data from Google Drive');
 
-      // If URL fetch fails, try local file (for development)
-      if (process.env.NODE_ENV !== 'production') {
-        try {
-          const dataPath = path.join(__dirname, '../data/youtubeData.json');
-          console.log('Trying local file:', dataPath);
-
-          if (fs.existsSync(dataPath)) {
-            const fileData = fs.readFileSync(dataPath, 'utf8');
-            const parsedData = JSON.parse(fileData);
-            console.log('Successfully loaded YouTube data from local file');
-            return parsedData;
-          }
-        } catch (fileError) {
-          console.error('Error reading local file:', fileError.message);
-        }
-      }
-
-      // If all else fails, use hardcoded data
-      console.log('Using hardcoded fallback data');
-      return hardcodedYoutubeData;
+    // Ensure the data has a source property
+    if (!data.source) {
+      data.source = 'google-drive';
     }
+
+    // Ensure the data has a lastUpdated property
+    if (!data.lastUpdated) {
+      data.lastUpdated = new Date().toISOString();
+    }
+
+    return data;
   } catch (error) {
-    console.error('Error in loadYoutubeData:', error.message);
-    return hardcodedYoutubeData;
+    console.error('Error fetching YouTube data from Google Drive:', error.message);
+
+    // Return empty data structure instead of hardcoded data
+    return {
+      videos: [],
+      channelId: "YOUR_CHANNEL_ID",
+      source: "google-drive-error",
+      lastUpdated: new Date().toISOString(),
+      error: error.message
+    };
   }
 };
 
@@ -161,22 +95,21 @@ router.get('/', async (req, res) => {
     const youtubeData = await loadYoutubeData();
     const processedVideos = processVideos(youtubeData);
 
-    // Check if we're in a production-like environment
-    const isProduction = process.env.NODE_ENV === 'production' ||
-                        process.env.NETLIFY === 'true' ||
-                        process.env.VERCEL === '1';
-
     // Create debug information to pass to the client
     const debugInfo = {
       videosCount: processedVideos.length,
-      dataSource: youtubeData.source || 'unknown',
-      environment: isProduction ? 'production' : 'development',
+      dataSource: youtubeData.source || 'google-drive',
       host: req.get('host') || 'unknown',
       url: req.originalUrl || 'unknown',
       timestamp: new Date().toISOString(),
       lastUpdated: youtubeData.lastUpdated || 'unknown',
-      dataUrl: process.env.YOUTUBE_DATA_URL || 'not set'
+      dataUrl: process.env.YOUTUBE_DATA_URL || 'default Google Drive URL'
     };
+
+    // If there was an error, include it in the debug info
+    if (youtubeData.error) {
+      debugInfo.error = youtubeData.error;
+    }
 
     res.render('youtube', {
       title: 'Ottawa Opal Shop - YouTube Channel',
